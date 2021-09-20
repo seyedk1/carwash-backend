@@ -1,14 +1,14 @@
 const bcrypt = require("bcryptjs");
 
-const User = require("../models/user");
+const User = require("../model/user-model");
 
 
 exports.register = async (req, res, next) => {
     try {
         await User.createUserValidation(req.body);
-        const { username, password, isAdmin } = req.body;
+        const { username, password, first_name, last_name, is_admin } = req.body;
 
-        const user = await User.findOne({ username, isActive: true, isDeleted: false });
+        const user = await User.findOne({ username, is_active: true, is_deleted: false });
         if (user) {
             const error = new Error("The user is already exist in database")
             error.statusCode = 422
@@ -16,7 +16,7 @@ exports.register = async (req, res, next) => {
         }
         else {
             const hash = await bcrypt.hash(password, 10);
-            await User.create({ username, password: hash, role: isAdmin ? 'admin' : 'customer', isAdmin });
+            await User.create({ username, first_name, last_name, password: hash, is_admin });
 
             res.status(201).json({ message: "user created successfully" })
         }
