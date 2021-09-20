@@ -20,7 +20,7 @@ exports.authenticated = (req, res, next) => {
             throw error;
         }
 
-        req.userId = decodedToken.user.userId;
+        req.user_id = decodedToken.user.user_id;
         req.user = decodedToken.user
         next();
     } catch (err) {

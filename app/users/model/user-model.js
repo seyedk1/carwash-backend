@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema;
 
-const { registerSchema } = require("../schemas/register-schema");
+const { editUserSchema } = require("../schema/edit-user-schema");
 
 const userSchema = new Schema({
     username: {
@@ -11,7 +11,7 @@ const userSchema = new Schema({
         unique: true,
         validate: {
             validator: function (n) {
-                return /d{11}/.test(n);
+                return /^09\d{9}$/.test(n);
             },
             message: '{VALUE} is not a valid phone number!'
         }
@@ -23,9 +23,18 @@ const userSchema = new Schema({
         maxlength: 255
     },
 
-    role_id: {
-        type: Schema.Types.ObjectId,
-        ref: "Lookup"
+    first_name: {
+        type: String,
+        required: true,
+        minlength: 4,
+        maxlength: 255
+    },
+
+    last_name: {
+        type: String,
+        required: true,
+        minlength: 4,
+        maxlength: 255
     },
 
     is_admin: {
@@ -51,6 +60,10 @@ const userSchema = new Schema({
 
 userSchema.statics.createUserValidation = function (body) {
     return registerSchema.validate(body, { abortEarly: false });
+};
+
+userSchema.statics.editUserValidation = function (body) {
+    return editUserSchema.validate(body, { abortEarly: false });
 };
 
 const User = mongoose.model("User", userSchema)
