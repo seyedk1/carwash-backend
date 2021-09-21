@@ -1,17 +1,14 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema;
 
-const { createServiceSchema } = require("../schemas/create-service-schema");
+const { createServiceSchema } = require("../schema/create-service-schema");
+const { editServiceSchema } = require("../schema/edit-service-schema");
 
 const serviceSchema = new Schema({
-    user_id: {
-        type: Number,
-        default: null
-    },
-
     name: {
         type: String,
         required: true,
+        unique: true,
         minlength: 4,
         maxlength: 255
     },
@@ -48,6 +45,11 @@ const serviceSchema = new Schema({
 // create service
 serviceSchema.statics.createServiceValidation = function (body) {
     return createServiceSchema.validate(body, { abortEarly: false });
+};
+
+// edit service
+serviceSchema.statics.editServiceValidation = function (body) {
+    return editServiceSchema.validate(body, { abortEarly: false });
 };
 
 const service = mongoose.model("Service", serviceSchema)
