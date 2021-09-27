@@ -1,7 +1,8 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema;
 
-const { createOrderSchema } = require("../schemas/create-order-schema");
+const { createOrderSchema } = require("../schema/create-order-schema");
+const { editOrderSchema } = require("../schema/edit-order-schema");
 
 const orderSchema = new Schema({
     user_id: {
@@ -11,17 +12,20 @@ const orderSchema = new Schema({
 
     car_id: {
         type: Schema.Types.ObjectId,
-        ref: "Lookup"
+        ref: "Lookup",
+        required: true,
     },
 
     car_brand_id: {
         type: Schema.Types.ObjectId,
-        ref: "Lookup"
+        ref: "Lookup",
+        required: true,
     },
 
     car_color_id: {
         type: Schema.Types.ObjectId,
-        ref: "Lookup"
+        ref: "Lookup",
+        required: true,
     },
 
     status_id: {
@@ -32,14 +36,19 @@ const orderSchema = new Schema({
 
     service_id: {
         type: Schema.Types.ObjectId,
-        ref: "Lookup"
+        ref: "Service"
     },
 
     service_date: {
         type: String,
         required: true,
-        match: "^(\\d{4}-\\d{2}-\\d{2})",
-        description: "Format: jYYYY/JMM/JDD"
+        validate: {
+            validator: function (n) {
+                return /^[1-4]\d{3}\/((0[1-6]\/((3[0-1])|([1-2][0-9])|(0[1-9])))|((1[0-2]|(0[7-9]))\/(30|([1-2][0-9])|(0[1-9]))))$/.test(n);
+            },
+            message: '{VALUE} is not a date!'
+        },
+        description: "Format: jYYYY/JMM/JDD",
     },
 
     service_hour: {
@@ -47,13 +56,6 @@ const orderSchema = new Schema({
         required: true,
         enum: ['9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00'],
         description: "Services are provided during these hours"
-    },
-
-    fee_payable: {
-        type: Number,
-        required: true,
-        min: 100000,
-        description: "The minimum service price is 100,000 toman"
     },
 
     address: {
@@ -80,9 +82,14 @@ const orderSchema = new Schema({
     }
 })
 
-// create service
+// create order
 orderSchema.statics.createOrderValidation = function (body) {
     return createOrderSchema.validate(body, { abortEarly: false });
+};
+
+// edit order
+orderSchema.statics.editOrderValidation = function (body) {
+    return editOrderSchema.validate(body, { abortEarly: false });
 };
 
 const order = mongoose.model("Order", orderSchema)
