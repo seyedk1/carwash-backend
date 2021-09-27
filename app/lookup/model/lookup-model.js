@@ -18,7 +18,8 @@ const lookupSchema = new Schema({
     title: {
         type: String,
         required: true,
-        minlength: 4,
+        unique: true,
+        minlength: 2,
         maxlength: 255
     },
 

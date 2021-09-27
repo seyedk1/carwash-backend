@@ -37,6 +37,7 @@ app.use(express.static(path.join(__dirname, 'public')))
 app.use("/api/users", require('./app/users/router'))
 app.use("/api/lookup", require('./app/lookup/router'))
 app.use("/api/services", require('./app/services/router'))
+app.use("/api/orders", require('./app/orders/router'))
 
 //* Error Controller
 app.use(errorHandler);

@@ -12,6 +12,10 @@ exports.deleteLookup = async (req, res, next) => {
             res.status(404).json({ message: "There is no exist item with these information in lookup" })
         }
 
+        // remove subset of parent (if exist)
+        if (lookup.parent_id == '0')
+            await Lookup.updateMany({ parent_id: lookup.auto_id }, { is_deleted: true })
+
         res.status(200).json({ message: 'item in lookup is removed successfully' })
 
     } catch (err) {
